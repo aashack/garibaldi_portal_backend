@@ -1,0 +1,28 @@
+services:
+  portal-db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: portal
+    volumes:
+      - portal_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  garibaldi_portal_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@portal-db:5432/portal?schema=public"
+      JWT_SECRET: "superSecretChangeMe"
+      PORT: "3001"
+    depends_on:
+      - portal-db
+    ports:
+      - "3001:3001"
+volumes:
+  portal_pgdata:
+
