@@ -11,7 +11,7 @@ export function sanitizeProfileInput(body: any): ProfileInput {
   for (const key of allowedFields) {
     if (Object.prototype.hasOwnProperty.call(body, key)) {
       const v = (body as any)[key];
-      (out as any)[key] = v === null || v === undefined || v === '' ? null : String(v);
+      (out as any)[key] = v ? String(v) : null;
     }
   }
   return out;
@@ -25,14 +25,22 @@ export async function createProfileForUser(userId: string, body: any): Promise<a
   const existing = await getProfileByUserId(userId);
   if (existing) return null;
   const data = sanitizeProfileInput(body);
-  return prisma.profile.create({ data: { userId, ...data } });
+  return prisma.profile.create(
+    { data: 
+      { 
+        userId, 
+        ...data 
+      } 
+    });
 }
 
 export async function getOrCreateProfileForUser(
   userId: string
 ): Promise<{ profile: any; created: boolean }> {
   const existing = await getProfileByUserId(userId);
-  if (existing) return { profile: existing, created: false };
+  if (existing) return { 
+    profile: existing, created: false 
+  };
   const created = await prisma.profile.create({ data: { userId } });
   return { profile: created, created: true };
 }
