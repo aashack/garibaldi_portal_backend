@@ -20,6 +20,9 @@ if (!SECRET) {
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   try {
+    // Allow CORS preflight to pass without auth
+    if (req.method === 'OPTIONS') return next();
+
     const auth = req.header('authorization') || req.header('Authorization');
     if (!auth || !auth.toLowerCase().startsWith('bearer ')) {
       return res.status(401).json({ error: 'Missing or invalid Authorization header' });
@@ -41,4 +44,3 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ error: 'Unauthorized', details: err?.message });
   }
 }
-

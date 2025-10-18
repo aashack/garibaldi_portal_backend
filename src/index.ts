@@ -1,12 +1,19 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import profileRoutes from './routes/profile';
 
-dotenv.config();
-
 const app = express();
-app.use(cors());
+const port = process.env.PORT || 3001;
+
+// Detailed CORS configuration
+app.use(cors({
+  origin: ['http://localhost:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 204
+}));
 app.use(express.json());
 
 app.get('/', (_req, res) => {
@@ -15,5 +22,11 @@ app.get('/', (_req, res) => {
 
 app.use('/api/profile', profileRoutes);
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
-app.listen(PORT, () => console.log(`Portal backend listening on ${PORT}`));
+// Handle 404s
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+app.listen(port, () => {
+  console.log(`Portal backend listening on port ${port}`);
+});

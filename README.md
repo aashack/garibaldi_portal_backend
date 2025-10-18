@@ -19,6 +19,8 @@ Express + TypeScript + Prisma service that manages user profiles for the portal.
    - From `garibaldi_portal_backend/`: `docker-compose up -d`
 2. Run Prisma migrations and generate client:
    - `docker-compose exec garibaldi_portal_backend npx prisma migrate deploy`
+   - or for dev:
+   - `docker-compose exec npx prisma migrate dev --name init`
    - `docker-compose exec garibaldi_portal_backend npx prisma generate`
 
 Ensure `JWT_SECRET` matches the value used by `garibaldi_login` so tokens verify correctly.

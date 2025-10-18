@@ -9,9 +9,13 @@ RUN npm install
 # Copy source
 COPY . .
 
-# Generate Prisma Client and Build
-RUN npx prisma generate
+# Build TypeScript code and generate Prisma client
+RUN npm run prisma:generate
 RUN npm run build
 
-# Start
-CMD ["npm", "run", "start"]
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3001
+
+# Run migrations and start the app
+CMD /bin/sh -c "npm run prisma:migrate:deploy && npm start"
